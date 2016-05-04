@@ -1,0 +1,50 @@
+﻿@model jfrost_bugtracker.Models.ProjUsersViewModel
+@using jfrost_bugtracker.Models
+@{
+    ViewBag.Title = "AssignUsersToProj";
+}
+
+<h2>Assign Users To This Project</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Project
+        </th>
+        <th>
+            Current Users
+        </th>
+        <th>
+            Assign Users
+        </th>
+
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(model => model.Project.Name)
+        </td>
+        <td>
+            @foreach (var user in (List<ApplicationUser>)ViewBag.currentUsers)
+            {
+                @user.DisplayName <br />
+            }
+        </td>
+        <td>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Project.Id)
+
+                //<input type="hidden" name="Id" value="@Model.Project.Id" />
+
+                @Html.ListBox("selected", Model.Users)
+                @*<button type="submit" class="btn btn-primary">Submit</button>*@
+                <input type="submit" value="save" />
+            }
+        </td>
+    </tr>
+
+
+
+</table>

@@ -1,0 +1,40 @@
+﻿@model jfrost_bugtracker.Models.UserRolesViewModel
+@{
+    ViewBag.Title = "EditUser";
+}
+
+<h2>EditUser</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Roles)
+        </th>
+
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(model => model.Name)
+        </td>
+        <td>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @*@Html.HiddenFor(model => model.Project.Id)*@
+
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                @Html.ListBox("selected", Model.Roles)
+                @*<button type="submit" class="btn btn-primary">Submit</button>*@
+                <input type="submit" value="save" />
+            }
+        </td>
+    </tr>
+
+
+
+</table>

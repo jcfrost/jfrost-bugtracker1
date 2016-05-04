@@ -1,0 +1,98 @@
+﻿@model IEnumerable<jfrost_bugtracker.Models.Tickets>
+
+@{
+    ViewBag.Title = "TicketsAssigned";
+}
+
+<h2>TicketsAssigned</h2>
+
+<table id="tickets_table" class="table">
+    <thead>
+        <tr>
+            <th>
+                Ticket
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Project
+            </th>
+            <th>
+                Priority
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Created
+            </th>
+            <th>
+                Updated
+            </th>
+            <th>
+                Owner
+            </th>
+            <th>
+                Assigned To
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Project.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketType.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Updated)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OwnerUser.DisplayName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AssignedToUser.DisplayName)
+                </td>
+                <td>
+                    @*@Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Id })*@
+
+                    <a class="btn btn-default" href="@Url.Action("Edit", "Tickets", new { id = item.Id })">Edit</a>
+                    <a class="btn btn-default" href="@Url.Action("Details", "Tickets", new { id = item.Id })">Details</a>
+
+
+                    @*@Html.ActionLink("Delete", "Delete", new { id=item.Id }) //"Tickets" can't be deleted*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $('#tickets_table').DataTable();
+    </script>
+}

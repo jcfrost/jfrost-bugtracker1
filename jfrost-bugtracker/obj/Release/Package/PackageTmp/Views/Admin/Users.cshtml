@@ -1,0 +1,55 @@
+﻿@model IEnumerable<jfrost_bugtracker.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Users";
+}
+
+<h2 style="margin-top:50px">User Administration</h2>
+
+<table id="users_table" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.DisplayName)
+            </th>
+            @if (User.IsInRole("Administrator"))
+            {
+                <th>
+                    Admininstrator Actions
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    @user.UserName
+                </td>
+
+                <td>
+                    @user.DisplayName
+                </td>
+
+                <td>
+                    @*@Html.ActionLink("Assign Roles","EditUser", new { Id=user.Id})*@ <!--**Replaced with button**-->
+                    <a class="btn btn-default" href="@Url.Action("EditUser", "Admin", new { id = user.Id })">Assign Roles</a>
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts{
+    <script>
+        $('#users_table').DataTable();
+    </script>
+}
+
