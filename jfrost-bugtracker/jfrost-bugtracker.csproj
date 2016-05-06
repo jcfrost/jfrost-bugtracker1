@@ -208,6 +208,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminUserViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ImageUploadValidator.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Projects.cs" />
     <Compile Include="Models\ProjUsersViewModel.cs" />
@@ -304,9 +305,13 @@
     <Content Include="Views\Tickets\TicketsOnMyProjects.cshtml" />
     <Content Include="Views\Tickets\TicketsOwned.cshtml" />
     <Content Include="Views\Tickets\TicketsAssigned.cshtml" />
+    <Content Include="Views\Tickets\EditTicketComments.cshtml" />
+    <Content Include="Views\Tickets\DeleteTicketComments.cshtml" />
+    <Content Include="Views\Tickets\AddTicketAttachments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Img_Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

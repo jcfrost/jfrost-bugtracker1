@@ -4,7 +4,7 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Tickets</h2>
+<h2>All Tickets</h2>
 
 @*<p>
         <a class="btn btn-default" href="@Url.Action("TicketsOnMyProjects", "Tickets")">View Tickets for My Projects</a>
@@ -23,6 +23,7 @@
     @if (User.IsInRole("Submitter"))
     {
         <a class="btn btn-default" href="@Url.Action("TicketsOwned", "Tickets")">View MY OWNED TICKETS</a>
+        <a class="btn btn-default" href="@Url.Action("Create", "Tickets")">Create a NEW TICKET</a>
     }
 
 </p>
@@ -102,8 +103,9 @@
                     @if (User.IsInRole("Administrator"))
                     {
                         <a class="btn btn-default" href="@Url.Action("Edit", "Tickets", new { id = item.Id })">Edit</a>
+
+                        <a class="btn btn-default" href="@Url.Action("Details", "Tickets", new { id = item.Id })">Details</a>
                     }
-                    <a class="btn btn-default" href="@Url.Action("Details", "Tickets", new { id = item.Id })">Details</a>
 
 
                     @*@Html.ActionLink("Delete", "Delete", new { id=item.Id }) //"Tickets" can't be deleted*@

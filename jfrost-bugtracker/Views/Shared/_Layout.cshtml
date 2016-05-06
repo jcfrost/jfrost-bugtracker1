@@ -25,7 +25,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <!--Only show "Projects" link if user role is Administrator, Project Manaer or Developer-->
-                    @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager") || User.IsInRole("Developer") || User.IsInRole("Submitter"))
+                    @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager") || User.IsInRole("Developer"))
                     {
                         <li>@Html.ActionLink("Projects", "Index", "Projects")</li>
                     }

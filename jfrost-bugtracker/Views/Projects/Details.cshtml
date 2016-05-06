@@ -46,7 +46,7 @@
     @if (User.IsInRole("Administrator"))
     {
         @*@Html.ActionLink("Create New Project", "Create")*@ <!--**Replaced with button**-->
-        <a class="btn btn-default" href="@Url.Action("Create", "Tickets", new { id = Model.Id })">Create Ticket</a>
+        @*<a class="btn btn-default" href="@Url.Action("Create", "Tickets", new { id = Model.Id })">Create Ticket</a>*@
         <a class="btn btn-default" href="@Url.Action("Edit", "Projects")">Edit</a>
     }
     <br />

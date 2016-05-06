@@ -31,22 +31,24 @@
         </dt>
 
         <dd>
-            @foreach(var user in Model.Users)
+            @foreach (var user in Model.Users)
             {
-            @user.DisplayName<br />
+                @user.DisplayName<br />
             }
-            
+
         </dd>
 
     </dl>
 </div>
 <p>
     @*@Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")*@
-
-    @*@Html.ActionLink("Create New Project", "Create")*@ <!--**Replaced with button**-->
-    <a class="btn btn-default" href="@Url.Action("Create", "Tickets", new { id = Model.Id })">Create Ticket</a>
-    <a class="btn btn-default" href="@Url.Action("Edit", "Projects")">Edit</a>
+        @Html.ActionLink("Back to List", "Index")*@
+    @if (User.IsInRole("Administrator"))
+    {
+        @*@Html.ActionLink("Create New Project", "Create")*@ <!--**Replaced with button**-->
+        @*<a class="btn btn-default" href="@Url.Action("Create", "Tickets", new { id = Model.Id })">Create Ticket</a>*@
+        <a class="btn btn-default" href="@Url.Action("Edit", "Projects")">Edit</a>
+    }
     <br />
     <hr />
 

@@ -17,6 +17,13 @@
         <li>@Html.ActionLink("Admin", "Users", "Admin")</li>*@
 }
 
+@if (User.IsInRole("Administrator") || User.IsInRole("Project Manager") || User.IsInRole("Developer"))
+{
+    <p>
+        <a class="btn btn-default" href="@Url.Action("TicketsOnMyProjects", "Tickets")">View TICKETS FOR MY PROJECTS</a>
+    </p>
+}
+
 <table id="projects_table" class="table">
     <thead>
         <tr>

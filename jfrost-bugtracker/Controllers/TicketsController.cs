@@ -8,6 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using jfrost_bugtracker.Models;
 using Microsoft.AspNet.Identity;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace jfrost_bugtracker.Controllers
 {
@@ -28,7 +31,81 @@ namespace jfrost_bugtracker.Controllers
             return View(db.Tickets.ToList());
         }
 
-        
+        // GET: TicketAttachments
+        public static class ImageUploadValidator
+        {
+            public static bool IsWebFriendlyImage(HttpPostedFileBase file)
+            {
+                // check for actual object
+                if (file == null)
+                    return false;
+
+                //check size - file must be less than 2 MB and greater than 1 KB
+                if (file.ContentLength > 2 * 1024 * 1024 || file.ContentLength < 1024)
+                    return false;
+
+                try
+                {
+                    using (var img = Image.FromStream(file.InputStream))
+                    {
+                        return ImageFormat.Jpeg.Equals(img.RawFormat) ||
+                               ImageFormat.Png.Equals(img.RawFormat) ||
+                               ImageFormat.Gif.Equals(img.RawFormat);
+                    }
+                }
+
+
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        // GET: Tickets/AddTicketAttachments
+        [Authorize]
+        public ActionResult AddTicketAttachments(int? ticketId)
+        {
+            if (ticketId == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Tickets tickets = db.Tickets.Find(ticketId);
+            if (tickets == null)
+            {
+                return HttpNotFound();
+            }
+            var model = new TicketAttachments();
+            model.TicketId = tickets.Id;
+            return View(model);
+        }
+
+        // POST: Tickets/AddTicketAttachments
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult AddTicketAttachments([Bind(Include = "Id,Description,TicketId,MediaURL")] TicketAttachments ticketAttachment, HttpPostedFileBase image)
+        {
+            if (ModelState.IsValid)
+            {
+                //restricting the valid file formats to images only
+                if (ImageUploadValidator.IsWebFriendlyImage(image))
+                {
+                    var fileName = Path.GetFileName(image.FileName);
+                    image.SaveAs(Path.Combine(Server.MapPath("~/img_uploads/"), fileName));
+                    ticketAttachment.FileUrl = "~/img_uploads/" + fileName;
+                }
+                
+                ticketAttachment.Created = System.DateTimeOffset.Now;
+                db.TicketAttachment.Add(ticketAttachment);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
 
         // GET: Tickets On My Projects
         //[Authorize]
@@ -90,12 +167,12 @@ namespace jfrost_bugtracker.Controllers
         public ActionResult Create(int? id)  //add "(string? name)??
         {
             //model.OwnerUserId = 
-            //ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name");
+            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name");
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriority, "Id", "Name");
             ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name");
             ViewBag.TicketTypeId = new SelectList(db.TicketType, "Id", "Name");
             var ticket = new Tickets();
-            ticket.ProjectId = (int)id;
+            //ticket.ProjectId = (int)id;
             //ticket.Project.Name = (string)name;
             return View(ticket);
         }
@@ -123,6 +200,132 @@ namespace jfrost_bugtracker.Controllers
             ViewBag.TicketTypeId = new SelectList(db.TicketType, "Id", "Name", tickets.TicketTypeId);
             return View(tickets);
         }
+
+        // POST: Tickets/CreateTicketComments
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult CreateTicketComment(TicketComments ticketComment)
+        {
+            if (ModelState.IsValid)
+            {
+                ticketComment.UserId = User.Identity.GetUserId();
+                ticketComment.Created = System.DateTimeOffset.Now;
+                //comment.Updated = System.DateTimeOffset.Now;
+                db.TicketComment.Add(ticketComment);
+                db.SaveChanges();
+
+            }
+            //var blog = db.Tickets.Find(ticketComment.TicketId);
+            return RedirectToAction("Index", "Tickets");
+        }
+
+        //// POST: Tickets/AddTicketAttachments
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        ////[Authorize]
+        //public ActionResult AddTicketAttachments(TicketAttachments ticketAttachment, HttpPostedFileBase fileUpload, string fileDescription)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (fileUpload != null && fileUpload.ContentLength > 0)
+        //        {
+        //            fileUpload.SaveAs(Path.Combine(Server.MapPath("/uploads"), Guid.NewGuid() + Path.GetExtension(fileUpload.FileName)));
+
+        //            ticketAttachment.UserId = User.Identity.GetUserId();
+        //            ticketAttachment.Created = System.DateTimeOffset.Now;
+        //            ticketAttachment.FileUrl = fileUpload.FileName;
+        //            ticketAttachment.Description = fileDescription;
+        //        }
+        //        //comment.Updated = System.DateTimeOffset.Now;
+        //        db.TicketAttachment.Add(ticketAttachment);
+        //        db.SaveChanges();
+
+        //    }
+        //    //var blog = db.Tickets.Find(ticketAttachment.TicketId);
+        //    return RedirectToAction("Index", "Tickets");
+        //}
+
+        ////Start additional code for edit/delete Ticketcomments
+        //// GET: Tickets/EditTicketComments
+        //[Authorize(Roles = "Administrator, Moderator")]
+        //public ActionResult EditTicketComments(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    TicketComments comment = db.TicketComment.Find(id);
+        //    if (comment == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(comment);
+        //}
+
+        //// POST: Tickets/EditTicketComments
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin, Moderator")]
+        //public ActionResult EditComments(TicketComments comment)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        comment.AuthorId = User.Identity.GetUserId();
+        //        //comment.Created = System.DateTimeOffset.Now;
+        //        comment.Updated = System.DateTimeOffset.Now;
+
+        //        db.TicketComment.Attach(comment);
+        //        db.Entry(comment).Property("Comment").IsModified = true;
+        //        db.Entry(comment).Property("UserId").IsModified = true;
+        //        db.Entry(comment).Property("Updated").IsModified = true;
+
+        //        db.SaveChanges();
+
+        //    }
+
+        //    var blog = db.Posts.Find(comment.PostId);
+        //    return RedirectToAction("Details", "BlogPosts", new { slug = blog.Slug }); //need to send in a SLUG
+        //}
+
+        //// GET: BlogPosts/DeleteComments
+        //[Authorize(Roles = "Admin, Moderator")]
+        //public ActionResult DeleteComments(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //    }
+        //    Comment comment = db.Comments.Find(id);
+        //    if (comment == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(comment);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin, Moderator")]
+        //public ActionResult DeleteComments(int id)
+        //{
+        //    Comment comment = db.Comments.Find(id);
+        //    var slug = comment.Post.Slug;
+        //    db.Comments.Remove(comment);
+        //    db.SaveChanges();
+
+
+        //    return RedirectToAction("Details", "BlogPosts", new { slug = slug }); //need to send in a SLUG
+
+        //}
+
+        ////Stop additional code for Edit/Delete TicketComments
+
+
+
+
+
+
 
         // GET: Tickets/Edit/5
         public ActionResult Edit(int? id)
